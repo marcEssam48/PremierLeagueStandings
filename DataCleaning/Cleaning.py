@@ -166,6 +166,43 @@ def DifferenceGoals(Season,Team,SeasonCategorizedDataFrame):
     DifferenceGoals[Team] =  ResultantGoals
     return DifferenceGoals
 
+def GetNumberOfWins(season, team, DataFrame,Flag):
+    win = 0
+    Draw = 0
+    Lose = 0
+    TeamsPoints = {}
+    if Flag == "W":
+        for index, row in DataFrame.iterrows():
+            if str(row["HomeTeam"]) == team and str(row["Season"]) == season:
+                if int(row["FTHG"]) > int(row["FTAG"]):
+                    win+=1
+
+            elif str(row["AwayTeam"]) == team and str(row["Season"]) == season:
+                if int(row["FTHG"]) < int(row["FTAG"]):
+                    win += 1
+        TeamsPoints[team] = win
+    elif Flag == "D":
+        for index, row in DataFrame.iterrows():
+            if str(row["HomeTeam"]) == team and str(row["Season"]) == season:
+                if int(row["FTHG"]) == int(row["FTAG"]):
+                    Draw += 1
+
+            elif str(row["AwayTeam"]) == team and str(row["Season"]) == season:
+                if int(row["FTHG"]) == int(row["FTAG"]):
+                    Draw += 1
+        TeamsPoints[team] = Draw
+    elif Flag == "L":
+        for index, row in DataFrame.iterrows():
+            if str(row["HomeTeam"]) == team and str(row["Season"]) == season:
+                if int(row["FTHG"]) < int(row["FTAG"]):
+                    Lose += 1
+
+            elif str(row["AwayTeam"]) == team and str(row["Season"]) == season:
+                if int(row["FTHG"]) > int(row["FTAG"]):
+                    Lose += 1
+        TeamsPoints[team] = Lose
+    return TeamsPoints
+
 
 
 
