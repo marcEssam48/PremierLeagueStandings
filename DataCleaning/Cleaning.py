@@ -21,10 +21,11 @@ def AddingSeason(DataFrame,counter):
     Season_list = []
     for i in range(0,counter):
         for index,row in DataFrame.iterrows():
-            if int(int(row["#"])/381) == i:
+            if int(int(row["#"])/380) == i:
                 # print(str(row["#"]) + " Season " + str(i+1))
                 # row["Season"] = "Season " + str(i+1)
                 Season_list.append("Season " + str(i+1))
+                # print(Season_list)
 
             else:
                 continue
@@ -67,6 +68,8 @@ def GetTeamPointsPerSeason(season,team,DataFrame):
                 Homepoints+=0
             if int(row["FTHG"]) < int(row["FTAG"]) :
                 AwayPoints+=3
+            if int(row["FTHG"]) == int(row["FTAG"]):
+                DrawPoints+=1
     TotalPoints = Homepoints + AwayPoints + DrawPoints
     TeamsPoints[team] = TotalPoints
     return TeamsPoints
@@ -97,18 +100,14 @@ def DictionaryToDataFrame(Dictionary):
         for Teamdict in Dictionary[season]:
             for Team in Teamdict.keys():
                 # print(Team)
-                points = Teamdict[Team]
+                # points = Teamdict[Team]
                 season_list.append(season)
                 Teams_list.append(Team)
-                Points_list.append(points)
-                Matches_played.append("38")
+                # Points_list.append(points)
 
-                # DataFrame["Season"] = season
-                # DataFrame["Team"] = Team
-                # DataFrame["Points"] = points
     DataFrame["Season"] = season_list
     DataFrame["Team"] = Teams_list
-    DataFrame["Points"] = Points_list
+    # DataFrame["Points"] = Points_list
     return DataFrame
 
 def DictionaryToDataFrameGoals(DataFrameOfPoints,TeamGoals,Column):
@@ -148,6 +147,27 @@ def NumberOfMatchesPlayed(Season,Team,SeasonCategorizedDataFrame):
             continue
     TeamMatches[Team] = MatchesPlayed
     return TeamMatches
+
+def DifferenceGoals(Season,Team,SeasonCategorizedDataFrame):
+    DifferenceGoals = {}
+    GoalsScored = 0
+    GoalsRecieved = 0
+    for index, row in SeasonCategorizedDataFrame.iterrows():
+        if str(row["HomeTeam"]) == Team and str(row["Season"]) == Season:
+            GoalsScored +=int(row["FTHG"])
+            GoalsRecieved+= int(row["FTAG"])
+        elif str(row["AwayTeam"]) == Team and str(row["Season"]) == Season:
+            GoalsScored += int(row["FTAG"])
+            GoalsRecieved+=int(row["FTHG"])
+
+    ResultantGoals =  GoalsScored -   GoalsRecieved
+    if ResultantGoals > 0 :
+        ResultantGoals = "+" + str(ResultantGoals)
+    DifferenceGoals[Team] =  ResultantGoals
+    return DifferenceGoals
+
+
+
 
 
 
