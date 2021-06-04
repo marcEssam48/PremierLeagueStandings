@@ -4,6 +4,11 @@ import time
 import sys
 import time
 from tqdm import tqdm
+import pandas as pd
+import xlsxwriter
+
+workbook = xlsxwriter.Workbook('MODEL_COMPARISON.xlsx')
+
 
 
 MatchesDataFrame = clean.ReadExcel()
@@ -48,11 +53,18 @@ for Season in UniqueSeasons:
     TeamsPerSeasonDictionary[Season] = Teams
 
 print("Calculating Points and Goals for Every Team per Season ... ")
-
+start_time = time.time()
 for Season in tqdm(TeamsPerSeasonDictionary.keys()):
-    time.sleep(2)
+    time.sleep(1)
+    TeamsList = []
+    GoalList = []
+    GoalsRecievedList = []
+    MatchesList = []
+    DifferenceGoals = []
+    Wins = []
+    Draws = []
+    Loses = []
     for Team in TeamsPerSeasonDictionary[Season]:
-
         TeamPoints = clean.GetTeamPointsPerSeason(Season,Team, SeasonCategorizedDataFrame)
         TeamGoals = clean.TeamGoalScored(Season,Team,SeasonCategorizedDataFrame)
         TeamRecievedGoals = clean.TeamGoalRecieved(Season,Team,SeasonCategorizedDataFrame)
@@ -79,7 +91,11 @@ for Season in tqdm(TeamsPerSeasonDictionary.keys()):
     WinsPerTeamPerSeason[Season] = Wins
     DrawsPerTeamPerSeason[Season] = Draws
     LosePerTeamPerSeason[Season] = Loses
-    break
+    elapsed_time = time.time() - start_time
+
+
+
+
 
 
 
@@ -93,7 +109,19 @@ DataFrameOfGoalsRecieved = clean.DictionaryToDataFrameGoals(DataFrameOfTeams,Rec
 DataFrameOfDifferenceGoals = clean.DictionaryToDataFrameGoals(DataFrameOfTeams,DifferenceGoalsPerTeamPerSeason,"Difference Goals")
 DataFrameOfPoints = clean.DictionaryToDataFrameGoals(DataFrameOfTeams,PointsPerTeamPerSeason,"Points")
 
-print(DataFrameOfPoints)
+print("Sorting Teams Per Season ")
+with pd.ExcelWriter('PremierLeagueTeamsSorted.xlsx') as writer:
+    for Season in tqdm(UniqueSeasons):
+        time.sleep(2)
+        SlicedSeasons = DataFrameOfPoints[DataFrameOfPoints["Season"] == Season]
+        SlicedSeasons = SlicedSeasons.sort_values(["Points", "Difference Goals","Goals Scored"], ascending = (False, False,False))
+        SlicedSeasons.to_excel(writer, sheet_name=Season, index=False)
+
+
+HTML = DataFrameOfPoints.to_html()
+with open("Tables.html", "w") as html_file :
+    html_file.write(HTML)
+    html_file.close()
 
 
 
