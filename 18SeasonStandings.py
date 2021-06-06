@@ -110,7 +110,7 @@ DataFrameOfDifferenceGoals = clean.DictionaryToDataFrameGoals(DataFrameOfTeams,D
 DataFrameOfPoints = clean.DictionaryToDataFrameGoals(DataFrameOfTeams,PointsPerTeamPerSeason,"Points")
 
 print("Sorting Teams Per Season ")
-with pd.ExcelWriter('PremierLeagueTeamsSorted.xlsx') as writer:
+with pd.ExcelWriter('PremierLeagueTeamsSortedPredicted.xlsx') as writer:
     for Season in tqdm(UniqueSeasons):
         time.sleep(2)
         SlicedSeasons = DataFrameOfPoints[DataFrameOfPoints["Season"] == Season]
